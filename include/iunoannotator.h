@@ -7,7 +7,8 @@ typedef enum
 {
 	AnnotatorStyleFlag = 1,
 	AnnotatorStyleBox = 2,
-	AnnotatorStyleMarker = 3
+	AnnotatorStyleMarker = 3,
+	AnnotatorStyleMarkerAndLine = 4
 } IUnoAnnotatorStyle;
 
 typedef struct
