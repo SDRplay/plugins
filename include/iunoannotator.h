@@ -7,7 +7,8 @@ typedef enum
 {
 	AnnotatorStyleFlag = 1,
 	AnnotatorStyleBox = 2,
-	AnnotatorStyleMarker = 3
+	AnnotatorStyleMarker = 3,
+	AnnotatorStyleMarkerAndLine = 4
 } IUnoAnnotatorStyle;
 
 typedef struct
@@ -17,6 +18,8 @@ typedef struct
 	std::string text;
 	IUnoAnnotatorStyle style;
 	uint32_t rgb;
+	long long lineToFreq;
+	int lineToPower;
 } IUnoAnnotatorItem;
 
 class IUnoAnnotator

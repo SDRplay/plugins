@@ -135,4 +135,13 @@ public:
 
 	virtual bool GetConfigurationKey(std::string key, std::string& value) = 0;
 	virtual bool SetConfigurationKey(std::string key, std::string value) = 0;
+
+	virtual int GetVRXCount() = 0;
+	virtual bool GetVRXEnable(channel_t channel) = 0;
+	virtual bool SetVRXEnable(channel_t channel, bool enable) = 0;
+
+	virtual int GetStepSize(channel_t channel) = 0;
+
+	virtual int GetVFOSelect(channel_t channel) = 0;
+	virtual bool SetVFOSelect(channel_t channel, int vfo) = 0;
 };

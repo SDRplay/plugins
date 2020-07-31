@@ -31,7 +31,11 @@ public:
 		AudioVolumeChanged = 18,
 		AudioMuteChanged = 19,
 		IFGainChanged = 20,
-		SavingWorkspace = 21
+		SavingWorkspace = 21,
+		VRXCountChanged = 22,
+		VRXStateChanged = 23,
+		StepSizeChanged = 24,
+		VFOChanged = 25
 	} UnoEventType;
 
 	UnoEvent() :
@@ -93,6 +97,14 @@ public:
 			return "IFGainChanged";
 		case SavingWorkspace:
 			return "SavingWorkspace";
+		case VRXCountChanged:
+			return "VRXCountChanged";
+		case VRXStateChanged:
+			return "VRXStateChanged";
+		case StepSizeChanged:
+			return "StepSizeChanged";
+		case VFOChanged:
+			return "VFOChanged";
 		default:
 			return "Undefined event";
 		}
