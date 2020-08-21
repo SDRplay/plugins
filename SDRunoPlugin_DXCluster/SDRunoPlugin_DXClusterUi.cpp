@@ -210,6 +210,10 @@ void SDRunoPlugin_DXClusterUi::HandleEvent(const UnoEvent& ev)
 		SaveLocation();
 		break;
 
+	case UnoEvent::ClosingDown:
+		FormClosed();
+		break;
+
 	default:
 		break;
 	}

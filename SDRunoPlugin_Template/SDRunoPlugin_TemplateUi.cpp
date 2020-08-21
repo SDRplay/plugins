@@ -78,6 +78,10 @@ void SDRunoPlugin_TemplateUi::HandleEvent(const UnoEvent& ev)
 	case UnoEvent::SavingWorkspace:
 		break;
 
+	case UnoEvent::ClosingDown:
+		FormClosed();
+		break;
+
 	default:
 		break;
 	}

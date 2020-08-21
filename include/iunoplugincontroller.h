@@ -145,4 +145,7 @@ public:
 
 	virtual int GetVFOSelect(channel_t channel) = 0;
 	virtual bool SetVFOSelect(channel_t channel, int vfo) = 0;
+
+	virtual double GetSP1MinFrequency(channel_t channel) = 0;
+	virtual double GetSP1MaxFrequency(channel_t channel) = 0;
 };

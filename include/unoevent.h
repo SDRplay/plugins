@@ -35,7 +35,10 @@ public:
 		VRXCountChanged = 22,
 		VRXStateChanged = 23,
 		StepSizeChanged = 24,
-		VFOChanged = 25
+		VFOChanged = 25,
+		ClosingDown = 26,
+		SP1MinFreqChanged = 27,
+		SP1MaxFreqChanged = 28
 	} UnoEventType;
 
 	UnoEvent() :
@@ -105,6 +108,12 @@ public:
 			return "StepSizeChanged";
 		case VFOChanged:
 			return "VFOChanged";
+		case ClosingDown:
+			return "ClosingDown";
+		case SP1MinFreqChanged:
+			return "SP1MinFreqChanged";
+		case SP1MaxFreqChanged:
+			return "SP1MaxFreqChanged";
 		default:
 			return "Undefined event";
 		}

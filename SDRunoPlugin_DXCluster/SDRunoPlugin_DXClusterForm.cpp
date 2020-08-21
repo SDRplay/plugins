@@ -9,7 +9,7 @@
 #include <io.h>
 #include <shlobj.h>
 
-#define VERSION "V1.0"
+#define VERSION "V1.1"
 
 // Form constructor with handles to parent and uno controller - launches form Setup
 SDRunoPlugin_DXClusterForm::SDRunoPlugin_DXClusterForm(SDRunoPlugin_DXClusterUi& parent, IUnoPluginController& controller) :
