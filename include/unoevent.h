@@ -38,7 +38,10 @@ public:
 		VFOChanged = 25,
 		ClosingDown = 26,
 		SP1MinFreqChanged = 27,
-		SP1MaxFreqChanged = 28
+		SP1MaxFreqChanged = 28,
+		BiasTEnableChanged = 29,
+		SP1MinPowerChanged = 30,
+		SP1MaxPowerChanged = 31
 	} UnoEventType;
 
 	UnoEvent() :
@@ -114,6 +117,12 @@ public:
 			return "SP1MinFreqChanged";
 		case SP1MaxFreqChanged:
 			return "SP1MaxFreqChanged";
+		case BiasTEnableChanged:
+			return "BiasTEnableChanged";
+		case SP1MinPowerChanged:
+			return "SP1MinPowerChanged";
+		case SP1MaxPowerChanged:
+			return "SP1MaxPowerChanged";
 		default:
 			return "Undefined event";
 		}

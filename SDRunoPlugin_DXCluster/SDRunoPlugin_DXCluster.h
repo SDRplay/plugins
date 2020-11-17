@@ -29,7 +29,7 @@ public:
 
 	virtual void AnnotatorProcess(std::vector<IUnoAnnotatorItem>& items) override;
 
-	void StartDXCluster(std::string addr, std::string port, std::string callsign, int timeMins);
+	void StartDXCluster(std::string addr, std::string port, std::string callsign, int timeMins, std::string response);
 	void StopDXCluster();
 	bool IsRunning() { return m_started; }
 	void StartAnnotator();
@@ -57,7 +57,7 @@ private:
 	SDRunoPlugin_DXClusterUi m_form;
 	bool m_started;
 	void sendstring(int sockfd, const char *s);
-	void waitforstring(int sockfd, const char *s);
+	bool waitforstring(int sockfd, const char *s);
 	void processDX(const char *s);
 	void add_DXEntry(std::string callsign, std::string t, long long freq);
 	bool olderThanTimer(std::string timeUTC);
@@ -66,7 +66,9 @@ private:
 	std::string cAddr;
 	std::string cPort;
 	std::string cCallsign;
+	std::string cResponse;
 	int timeMinutes;
 	int dxCount;
 	int sampleRate;
+	bool responseMatched;
 };

@@ -9,7 +9,7 @@
 #include <io.h>
 #include <shlobj.h>
 
-#define VERSION "V1.1"
+#define VERSION "V1.3"
 
 // Form constructor with handles to parent and uno controller - launches form Setup
 SDRunoPlugin_DXClusterForm::SDRunoPlugin_DXClusterForm(SDRunoPlugin_DXClusterUi& parent, IUnoPluginController& controller) :
@@ -224,6 +224,7 @@ void SDRunoPlugin_DXClusterForm::Setup()
 	std::string cluster = m_parent.LoadCluster();
 	int colourIndex = m_parent.LoadColour();
 	int baseline = m_parent.LoadBaseline();
+	std::string response = m_parent.LoadResponse();
 
 	const uint32_t forecolor = 0xffffff;
 
@@ -329,6 +330,14 @@ void SDRunoPlugin_DXClusterForm::Setup()
 				return;
 			}
 			callsignTb.bgcolor(nana::colors::white);
+
+			if (!checkResponse())
+			{
+				responseTb.bgcolor(nana::colors::red);
+				return;
+			}
+			responseTb.bgcolor(nana::colors::white);
+
 			if (!checkTimer())
 			{
 				timerTb.bgcolor(nana::colors::red);
@@ -339,7 +348,7 @@ void SDRunoPlugin_DXClusterForm::Setup()
 		}
 		else
 		{
-			m_parent.StartButtonClicked("a", "1", "b", 1);
+			m_parent.StartButtonClicked("a", "1", "b", 1, "dxspider");
 			statusLbl.caption("Status: Stopped");
 		}
 	});
@@ -365,10 +374,16 @@ void SDRunoPlugin_DXClusterForm::Setup()
 			statusLbl.caption("Status: Stopped");
 			if (startBtn.caption() != "Start")
 			{
-				m_parent.StartButtonClicked("a", "1", "b", 1);
+				m_parent.StartButtonClicked("a", "1", "b", 1, "dxspider");
 			}
 		}
 	});
+
+	responseLbl.caption("Response:");
+	responseLbl.fgcolor(nana::color_rgb(forecolor));
+	responseLbl.transparent(true);
+
+	responseTb.caption(response);
 }
 
 bool SDRunoPlugin_DXClusterForm::checkCallsign()
@@ -434,5 +449,15 @@ void SDRunoPlugin_DXClusterForm::checkCluster()
 	}
 
 	clusterTb.bgcolor(nana::colors::white);
-	m_parent.StartButtonClicked(clusterAddr, clusterPort, callsignTb.text(), stoi(timerTb.text()));
+	m_parent.StartButtonClicked(clusterAddr, clusterPort, callsignTb.text(), stoi(timerTb.text()), responseTb.text());
 }
+
+bool SDRunoPlugin_DXClusterForm::checkResponse()
+{
+	if (responseTb.text().empty())
+	{
+		return false;
+	}
+	return true;
+}
+

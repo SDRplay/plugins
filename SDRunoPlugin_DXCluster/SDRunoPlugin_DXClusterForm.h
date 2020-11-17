@@ -51,6 +51,11 @@ public:
 		timerTb.enabled(state);
 	}
 
+	void SetResponseTextboxState(bool state)
+	{
+		responseTb.enabled(state);
+	}
+
 	void SetClusterTextboxState(bool state)
 	{
 		clusterTb.enabled(state);
@@ -79,6 +84,11 @@ public:
 	std::string GetClusterText()
 	{
 		return clusterTb.text();
+	}
+
+	std::string GetResponseText()
+	{
+		return responseTb.text();
 	}
 
 	int GetColourIndex()
@@ -144,13 +154,16 @@ private:
 	nana::textbox baselineTb{ *this, nana::rectangle(98, 85, 40, 20) };
 	nana::label colourLbl{ *this, nana::rectangle(138, 87, 70, 20) };
 	nana::combox colourCb{ *this, nana::rectangle(208, 85, 70, 20) };
-	nana::label statusLbl{ *this, nana::rectangle(18, 112, 270, 20) };
+	nana::label responseLbl{ *this, nana::rectangle(18, 113, 70, 20) };
+	nana::textbox responseTb{ *this, nana::rectangle(78, 112, 200, 20) };
+	nana::label statusLbl{ *this, nana::rectangle(18, 137, 270, 20) };
 	nana::timer m_timer;
 	nana::label versionLbl{ *this, nana::rectangle(formWidth - 40, formHeight - 30, 30, 20) };
 
 	bool checkCallsign();
 	bool checkTimer();
 	void checkCluster();
+	bool checkResponse();
 
 	double m_timerCount;
 

@@ -5,6 +5,7 @@
 #include "iunoaudioobserver.h"
 #include "iunoaudioprocessor.h"
 #include "iunostreamprocessor.h"
+#include "iunompxobserver.h"
 #include "iunoannotator.h"
 
 class IUnoPluginController
@@ -63,6 +64,9 @@ public:
 
 	virtual void RegisterAudioProcessor(channel_t, IUnoAudioProcessor* observer) = 0;
 	virtual void UnregisterAudioProcessor(channel_t, IUnoAudioProcessor* observer) = 0;
+
+	virtual void RegisterMpxObserver(channel_t, IUnoMpxObserver* observer) = 0;
+	virtual void UnregisterMpxObserver(channel_t, IUnoMpxObserver* observer) = 0;
 
 	virtual void RegisterAnnotator(IUnoAnnotator *annotator) = 0;
 	virtual void UnregisterAnnotator(IUnoAnnotator *annotator) = 0;
@@ -148,4 +152,13 @@ public:
 
 	virtual double GetSP1MinFrequency(channel_t channel) = 0;
 	virtual double GetSP1MaxFrequency(channel_t channel) = 0;
+
+	virtual double GetMPXLevel(channel_t channel) = 0;
+	virtual bool SetMPXLevel(channel_t channel, double mpxLevel) = 0;
+
+	virtual bool GetBiasTEnable() = 0;
+	virtual bool SetBiasTEnable(bool enable) = 0;
+
+	virtual int GetSP1MinPower(channel_t channel) = 0;
+	virtual int GetSP1MaxPower(channel_t channel) = 0;
 };

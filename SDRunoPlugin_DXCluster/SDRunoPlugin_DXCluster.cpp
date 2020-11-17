@@ -12,7 +12,7 @@
 #include "SDRunoPlugin_DXCluster.h"
 #include "SDRunoPlugin_DXClusterUi.h"
 
-#define MAXBUF 1024
+#define MAXBUF 4096
 #define bzero(x,y) memset(x,0,y);
 
 #if defined(_M_X64) || defined(_M_IX86)
@@ -36,7 +36,8 @@ SDRunoPlugin_DXCluster::SDRunoPlugin_DXCluster(IUnoPluginController& controller)
 	annocurr(NULL),
 	dxCount(0),
 	sampleRate(2000000),
-	m_started(false)
+	m_started(false),
+	responseMatched(false)
 {
 }
 
@@ -128,12 +129,13 @@ void SDRunoPlugin_DXCluster::StopAnnotator()
 	m_controller.UnregisterAnnotator(this);
 }
 
-void SDRunoPlugin_DXCluster::StartDXCluster(std::string addr, std::string port, std::string callsign, int timeMins)
+void SDRunoPlugin_DXCluster::StartDXCluster(std::string addr, std::string port, std::string callsign, int timeMins, std::string response)
 {
 	cAddr = addr;
 	cPort = port;
 	cCallsign = callsign;
 	timeMinutes = timeMins;
+	cResponse = response;
 
 	std::lock_guard<std::mutex> l(m_lock);
 	if (m_started)
@@ -167,28 +169,49 @@ void SDRunoPlugin_DXCluster::HandleEvent(const UnoEvent& ev)
 }
 
 // read data until get string
-void SDRunoPlugin_DXCluster::waitforstring(int sockfd, const char *s)
+bool SDRunoPlugin_DXCluster::waitforstring(int sockfd, const char *s)
 {
 	int res, pos = 0;
 	char buffer[MAXBUF];
 	bzero(buffer, MAXBUF);
+
+	if (responseMatched)
+	{
+		return true;
+	}
+
 	while (res = recv(sockfd, buffer + pos, sizeof(buffer) - pos, 0) > 0)
 	{
 		if (!m_started)
 		{
-			return;
+			return false;
+		}
+
+		if (responseMatched)
+		{
+			return true;
 		}
 
 		if (res > 0)
 		{
 			pos += res;
 			buffer[MAXBUF - 1] = 0;
+#ifdef DEBUG
 			char outbuf[MAXBUF];
-			sprintf(outbuf, "%s", buffer + pos);
+			sprintf(outbuf, "SDRuno wait %s", buffer);
+			OutputDebugStringA(outbuf);
+#endif
 			if (strstr(buffer, s))
-				return;
+			{
+#ifdef DEBUG
+				OutputDebugStringA("SDRuno Response Matched");
+#endif
+				responseMatched = true;
+				return true;
+			}
 		}
 	}
+	return false;
 }
 
 void SDRunoPlugin_DXCluster::sendstring(int sockfd, const char *s)
@@ -220,30 +243,12 @@ void SDRunoPlugin_DXCluster::WorkerFunction()
 		m_started = false;
 		return;
 	}
-/*
-	TIMEVAL Timeout;
-	Timeout.tv_sec = 1;
-	Timeout.tv_usec = 0;
-*/
+
 	server = gethostbyname(cAddr.c_str());
 	serv_addr.sin_addr.s_addr = inet_addr(server->h_addr);
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_port = htons(port);
 	memcpy(&serv_addr.sin_addr.s_addr, server->h_addr, server->h_length);
-/*
-	//set the socket in non-blocking
-	unsigned long iMode = 1;
-	ioctlsocket(s, FIONBIO, &iMode);
-	{
-#if defined(_M_X64) || defined(_M_IX86)
-		closesocket(s);
-		WSACleanup();
-#else
-		close(s);
-#endif
-		m_started = false;
-		return;
-	} */
 
 	// Connect to server
 	if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
@@ -258,53 +263,25 @@ void SDRunoPlugin_DXCluster::WorkerFunction()
 		return;
 	}
 
-	// restart the socket mode
-/*
-	iMode = 0;
-	if (ioctlsocket(s, FIONBIO, &iMode) != NO_ERROR)
-	{
-#if defined(_M_X64) || defined(_M_IX86)
-		closesocket(s);
-		WSACleanup();
-#else
-		close(s);
-#endif
-		m_started = false;
-		return;
-	}
-
-	fd_set Write, Err;
-	FD_ZERO(&Write);
-	FD_ZERO(&Err);
-	FD_SET(s, &Write);
-	FD_SET(s, &Err);
-
-	// check if the socket is ready
-	select(0, NULL, &Write, &Err, &Timeout);
-	if (!FD_ISSET(s, &Write))
-	{
-#if defined(_M_X64) || defined(_M_IX86)
-		closesocket(s);
-		WSACleanup();
-#else
-		close(s);
-#endif
-		m_started = false;
-		return;
-	}
-	*/
 	// Login to Telnet Server
 	waitforstring(sock, "ogin: ");
+	responseMatched = false;
 	char csTmp[16];
 	sprintf(csTmp, "%s\r\n", cCallsign.c_str());
 	sendstring(sock, csTmp);
-	waitforstring(sock, "dxspider");
+	char wsTmp[255];
+	sprintf(wsTmp, "%s", cResponse.c_str());
+
+	if (!waitforstring(sock, wsTmp))
+	{
+		m_started = false;
+	}
 
 	int res, pos = 0;
 	char buffer[MAXBUF];
 
 	// Now process DX records
-	while (m_started)
+	while (m_started && responseMatched)
 	{
 		pos = 0;
 		bzero(buffer, MAXBUF);
@@ -326,7 +303,13 @@ void SDRunoPlugin_DXCluster::WorkerFunction()
 			{
 				pos += res;
 				buffer[MAXBUF - 1] = 0;
-				if (strstr(buffer, "DX de"))
+#ifdef DEBUG
+				char out[MAXBUF];
+				sprintf(out, "SDRuno in %s", buffer);
+				OutputDebugStringA(out);
+#endif
+				char *cstr = strstr(buffer, "DX de");
+				if (cstr != NULL)
 				{
 					processDX(buffer);
 					bzero(buffer, MAXBUF);
@@ -353,20 +336,56 @@ void SDRunoPlugin_DXCluster::processDX(const char *s)
 	// DX de SV3GLL:	24915.0  UT8IA        FT8 - 03dB from KN29 1414Hz    0849Z KM17
 	// DX de DJ9YE:     50313.0  OH6OKSA      JO43HV<ES>KP32EQ FT8 mni tnx Q 0849Z JO43
 	// DX de DL4CH:  10489710.0  DF7DQ        qo 100                         0853Z
-
+	if (s == NULL)
+	{
+#ifdef DEBUG
+		OutputDebugStringA("SDRuno processDX null string");
+#endif
+		return;
+	}
+#ifdef DEBUG
+	char out[MAXBUF];
+	sprintf(out, "SDRuno pr %s", s);
+	OutputDebugStringA(out);
+#endif
 	std::string lineToProcess = s;
 	int dxdepos = lineToProcess.find("DX de");
+
+	if (dxdepos == std::string::npos)
+	{
+#ifdef DEBUG
+		OutputDebugStringA("SDRuno DX de not found");
+#endif
+		return;
+	}
 
 	std::string sfreqkHz = lineToProcess.substr(dxdepos + 14, 10);
 	std::string scsign =   lineToProcess.substr(dxdepos + 26, 10);
 	std::string stimeZ =   lineToProcess.substr(dxdepos + 70,  4);
 
+	if (sfreqkHz.empty() || scsign.empty() || stimeZ.empty())
+	{
+#ifdef DEBUG
+		OutputDebugStringA("SDRuno process line error");
+#endif
+		return;
+	}
+
 	// remove whitespace
 	sfreqkHz.erase(std::remove_if(sfreqkHz.begin(), sfreqkHz.end(), ::isspace), sfreqkHz.end());
 	scsign.erase(std::remove_if(scsign.begin(), scsign.end(), ::isspace), scsign.end());
 
-	double dfreqkHz = stod(sfreqkHz);
-	long long llfreqHz = (long long)(dfreqkHz * 1000);
+	double dfreqkHz;
+	long long llfreqHz;
+	try
+	{
+		dfreqkHz = stod(sfreqkHz);
+		llfreqHz = (long long)(dfreqkHz * 1000);
+	}
+	catch (...)
+	{
+		return;
+	}
 
 	if (head == NULL)
 	{
@@ -383,7 +402,6 @@ void SDRunoPlugin_DXCluster::processDX(const char *s)
 			// entries older than timer (in mins)
 			if (scsign.compare(current->callsign) == 0 || olderThanTimer(current->timeUTC)) 
 			{
-//				OutputDebugStringA("Remove callsign");
 				if (prev == NULL)
 				{
 					head = current->next;
@@ -392,7 +410,6 @@ void SDRunoPlugin_DXCluster::processDX(const char *s)
 				{
 					prev->next = current->next;
 				}
-				//dxCount--;
 			}
 			prev = current;
 			if (current->next != NULL)
@@ -428,12 +445,6 @@ void SDRunoPlugin_DXCluster::add_DXEntry(std::string callsign, std::string t, lo
 		tail->next = tmp;
 		tail = tail->next;
 	}
-	
-/*
-	char tmpout[80];
-	sprintf(tmpout, "count: %d, style: %d, callsign: %s, freq: %lld, time: %s", dxCount, styleCount, tmp->callsign.c_str(), tmp->freq, tmp->timeUTC.c_str());
-	OutputDebugStringA(tmpout);
-*/
 }
 
 bool SDRunoPlugin_DXCluster::olderThanTimer(std::string timeUTC)

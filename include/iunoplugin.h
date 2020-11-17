@@ -14,7 +14,7 @@
 #define UNOPLUGINCALL
 #endif
 
-#define UNOPLUGINAPIVERSION (0x00000001)
+#define UNOPLUGINAPIVERSION (0x00000002)
 
 class IUnoPluginController;
 class UnoEvent;

@@ -25,7 +25,6 @@ SDRunoPlugin_DXClusterUi::SDRunoPlugin_DXClusterUi(SDRunoPlugin_DXCluster& paren
 SDRunoPlugin_DXClusterUi::~SDRunoPlugin_DXClusterUi()
 {
 	StopDXCluster();
-	SaveSettings();
 	nana::API::exit_all();
 	m_thread.join();	
 }
@@ -45,11 +44,11 @@ bool SDRunoPlugin_DXClusterUi::IsRunning()
 	return m_parent.IsRunning();
 }
 
-void SDRunoPlugin_DXClusterUi::StartButtonClicked(std::string addr, std::string port, std::string callsign, int timeMins)
+void SDRunoPlugin_DXClusterUi::StartButtonClicked(std::string addr, std::string port, std::string callsign, int timeMins, std::string response)
 {
 	if (!m_started)
 	{
-		StartDXCluster(addr, port, callsign, timeMins);
+		StartDXCluster(addr, port, callsign, timeMins, response);
 	}
 	else
 	{
@@ -141,12 +140,23 @@ std::string SDRunoPlugin_DXClusterUi::LoadCluster()
 	return tmp;
 }
 
-void SDRunoPlugin_DXClusterUi::StartDXCluster(std::string addr, std::string port, std::string callsign, int timeMins)
+std::string SDRunoPlugin_DXClusterUi::LoadResponse()
+{
+	std::string tmp;
+	m_controller.GetConfigurationKey("DXCluster.Response", tmp);
+	if (tmp.empty())
+	{
+		return "dxspider"; // TODO: Better default?
+	}
+	return tmp;
+}
+
+void SDRunoPlugin_DXClusterUi::StartDXCluster(std::string addr, std::string port, std::string callsign, int timeMins, std::string response)
 {
 	std::lock_guard<std::mutex> l(m_lock);
 	if (!m_started)
 	{
-		m_parent.StartDXCluster(addr, port, callsign, timeMins);
+		m_parent.StartDXCluster(addr, port, callsign, timeMins, response);
 
 		if (m_form != nullptr)
 		{
@@ -156,6 +166,7 @@ void SDRunoPlugin_DXClusterUi::StartDXCluster(std::string addr, std::string port
 			m_form->SetClusterTextboxState(false);
 			m_form->SetColourComboBoxState(false);
 			m_form->SetBaselineTextboxState(false);
+			m_form->SetResponseTextboxState(false);
 			m_form->StartTimer();
 		}
 		m_started = true;
@@ -177,6 +188,7 @@ void SDRunoPlugin_DXClusterUi::StopDXCluster()
 			m_form->SetClusterTextboxState(true);
 			m_form->SetColourComboBoxState(true);
 			m_form->SetBaselineTextboxState(true);
+			m_form->SetResponseTextboxState(true);
 		}
 		m_started = false;
 	}
@@ -211,7 +223,7 @@ void SDRunoPlugin_DXClusterUi::HandleEvent(const UnoEvent& ev)
 		break;
 
 	case UnoEvent::ClosingDown:
-		FormClosed();
+		SaveSettings();
 		break;
 
 	default:
@@ -225,18 +237,7 @@ void SDRunoPlugin_DXClusterUi::FormClosed()
 	SaveSettings();
 	m_controller.RequestUnload(&m_parent);
 }
-/*
-void SDRunoPlugin_DXClusterUi::StartAnnotator()
-{
-	m_parent.StartAnnotator();
-}
-*/
-/*
-void SDRunoPlugin_DXClusterUi::StopAnnotator()
-{
-	m_parent.StopAnnotator();
-}
-*/
+
 int SDRunoPlugin_DXClusterUi::DXCount()
 {
 	return m_parent.DXCount();
@@ -267,6 +268,10 @@ void SDRunoPlugin_DXClusterUi::SaveSettings()
 		if (!m_form->GetClusterText().empty())
 		{
 			m_controller.SetConfigurationKey("DXCluster.Cluster", m_form->GetClusterText());
+		}
+		if (!m_form->GetResponseText().empty())
+		{
+			m_controller.SetConfigurationKey("DXCluster.Response", m_form->GetResponseText());
 		}
 		m_controller.SetConfigurationKey("DXCluster.Colour", std::to_string(m_form->GetColourIndex()));
 		m_controller.SetConfigurationKey("DXCluster.Baseline", std::to_string(m_form->GetBaseline()));

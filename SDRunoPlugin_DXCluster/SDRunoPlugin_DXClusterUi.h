@@ -26,12 +26,9 @@ public:
 	void FormClosed();
 
 	void ShowUi();
-	void StartButtonClicked(std::string addr, std::string port, std::string callsign, int timeMins);
+	void StartButtonClicked(std::string addr, std::string port, std::string callsign, int timeMins, std::string response);
 	void SaveButtonClicked();
 	bool IsRunning();
-
-	//void StartAnnotator();
-	//void StopAnnotator();
 
 	int DXCount();
 
@@ -40,6 +37,7 @@ public:
 	std::string LoadCallsign();
 	int LoadTimer();
 	std::string LoadCluster();
+	std::string LoadResponse();
 	int LoadColour();
 	int LoadBaseline();
 
@@ -48,7 +46,7 @@ public:
 
 private:
 
-	void StartDXCluster(std::string addr, std::string port, std::string callsign, int timeMins);
+	void StartDXCluster(std::string addr, std::string port, std::string callsign, int timeMins, std::string response);
 	void StopDXCluster();
 	void SaveLocation();
 	void SaveSettings();
