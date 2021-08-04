@@ -264,17 +264,30 @@ void SDRunoPlugin_DXCluster::WorkerFunction()
 	}
 
 	// Login to Telnet Server
-	waitforstring(sock, "ogin: ");
-	responseMatched = false;
-	char csTmp[16];
-	sprintf(csTmp, "%s\r\n", cCallsign.c_str());
-	sendstring(sock, csTmp);
-	char wsTmp[255];
-	sprintf(wsTmp, "%s", cResponse.c_str());
-
-	if (!waitforstring(sock, wsTmp))
+	if (cCallsign.length() > 1)
 	{
-		m_started = false;
+		waitforstring(sock, "ogin: ");
+		responseMatched = false;
+		char csTmp[16];
+		sprintf(csTmp, "%s\r\n", cCallsign.c_str());
+		sendstring(sock, csTmp);
+		char wsTmp[255];
+		sprintf(wsTmp, "%s", cResponse.c_str());
+		if (cResponse.length() > 1)
+		{
+			if (!waitforstring(sock, wsTmp))
+			{
+				m_started = false;
+			}
+		}
+		else
+		{
+			responseMatched = true;
+		}
+	}
+	else
+	{
+		responseMatched = true;
 	}
 
 	int res, pos = 0;

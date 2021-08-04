@@ -55,12 +55,14 @@ private:
 	nana::paint::image img_header;
 	nana::picture close_button{ *this, nana::rectangle(0, 0, 20, 15) };
 	nana::picture min_button{ *this, nana::rectangle(0, 0, 20, 15) };
+	nana::label versionLbl{ *this, nana::rectangle(formWidth - 40, formHeight - 30, 30, 20) };
 
-	// Uncomment the following 4 lines if you want a SETT button and panel
+	// Uncomment the following 5 lines if you want a SETT button and panel
 	nana::paint::image img_sett_normal;
 	nana::paint::image img_sett_down;
 	nana::picture sett_button{ *this, nana::rectangle(0, 0, 40, 15) };
 	void SettingsButton_Click();
+	void SettingsDialog_Closed();
 
 	// TODO: Now add your UI controls here
 

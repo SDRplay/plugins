@@ -30,6 +30,9 @@
     <ClCompile Include="SDRunoPlugin_TemplateUi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SDRunoPlugin_TemplateSettingsDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SDRunoPlugin_TemplateUi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SDRunoPlugin_TemplateSettingsDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

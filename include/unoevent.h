@@ -41,7 +41,11 @@ public:
 		SP1MaxFreqChanged = 28,
 		BiasTEnableChanged = 29,
 		SP1MinPowerChanged = 30,
-		SP1MaxPowerChanged = 31
+		SP1MaxPowerChanged = 31,
+		StartRequest = 32,
+		StopRequest = 33,
+		VFOSignalPresent = 34,
+		VFOSignalNotPresent = 35
 	} UnoEventType;
 
 	UnoEvent() :
@@ -123,6 +127,14 @@ public:
 			return "SP1MinPowerChanged";
 		case SP1MaxPowerChanged:
 			return "SP1MaxPowerChanged";
+		case StartRequest:
+			return "StartRequest";
+		case StopRequest:
+			return "StopRequest";
+		case VFOSignalPresent:
+			return "VFOSignalPresent";
+		case VFOSignalNotPresent:
+			return "VFOSignalNotPresent";
 		default:
 			return "Undefined event";
 		}

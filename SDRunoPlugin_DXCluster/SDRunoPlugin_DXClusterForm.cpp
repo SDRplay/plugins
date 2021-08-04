@@ -9,7 +9,7 @@
 #include <io.h>
 #include <shlobj.h>
 
-#define VERSION "V1.3"
+#define VERSION "V1.5"
 
 // Form constructor with handles to parent and uno controller - launches form Setup
 SDRunoPlugin_DXClusterForm::SDRunoPlugin_DXClusterForm(SDRunoPlugin_DXClusterUi& parent, IUnoPluginController& controller) :
@@ -388,10 +388,10 @@ void SDRunoPlugin_DXClusterForm::Setup()
 
 bool SDRunoPlugin_DXClusterForm::checkCallsign()
 {
-	if (callsignTb.text().empty())
-	{
-		return false;
-	}
+	//if (callsignTb.text().empty())
+	//{
+	//	return false;
+	//}
 	return true;
 }
 
@@ -454,10 +454,10 @@ void SDRunoPlugin_DXClusterForm::checkCluster()
 
 bool SDRunoPlugin_DXClusterForm::checkResponse()
 {
-	if (responseTb.text().empty())
-	{
-		return false;
-	}
+	//if (responseTb.text().empty())
+	//{
+	//	return false;
+	//}
 	return true;
 }
 

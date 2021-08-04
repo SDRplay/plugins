@@ -4,10 +4,13 @@
 #endif
 
 #include "SDRunoPlugin_TemplateForm.h"
+#include "SDRunoPlugin_TemplateSettingsDialog.h"
 #include "SDRunoPlugin_TemplateUi.h"
 #include "resource.h"
 #include <io.h>
 #include <shlobj.h>
+
+#define VERSION "V1.1"
 
 // Form constructor with handles to parent and uno controller - launches form Setup
 SDRunoPlugin_TemplateForm::SDRunoPlugin_TemplateForm(SDRunoPlugin_TemplateUi& parent, IUnoPluginController& controller) :
@@ -132,6 +135,7 @@ void SDRunoPlugin_TemplateForm::Setup()
 	bmInfo_min.bmiHeader.biCompression = BI_RGB;
 	bmInfo_min_over.bmiHeader.biCompression = BI_RGB;
 	bmInfo_bar.bmiHeader.biCompression = BI_RGB;
+	bmInfo_sett.bmiHeader.biCompression = BI_RGB;
 	bmInfo_sett_over.bmiHeader.biCompression = BI_RGB;
 	borderHeader.bfOffBits = rawDataOffset;
 	borderHeader.bfSize = bmInfo_border.bmiHeader.biSizeImage;
@@ -277,10 +281,36 @@ void SDRunoPlugin_TemplateForm::Setup()
 	sett_button.tooltip("Show settings window");
 	sett_button.transparent(true);
 
+	versionLbl.fgcolor(nana::colors::white);
+	versionLbl.caption(VERSION);
+	versionLbl.transparent(true);
+
 	// TODO: Extra Form code goes here
 }
 
 void SDRunoPlugin_TemplateForm::SettingsButton_Click()
 {
-	// TODO: Insert code here to show settings panel
+	//Create a new settings dialog object
+	SDRunoPlugin_TemplateSettingsDialog settingsDialog{ m_parent,m_controller };
+
+	//disable this form so settings dialog retains top level focus
+	this->enabled(false);
+
+	//Attach a handler to the settings dialog close event
+	settingsDialog.events().unload([&] { SettingsDialog_Closed(); });
+
+	//Show the setttings dialog
+	settingsDialog.Run();
+
+
+}
+
+void SDRunoPlugin_TemplateForm::SettingsDialog_Closed()
+{
+	//DO NOT REMOVE THE FLLOWING CODE it is required for the proper operation of the settings dialog form
+
+	this->enabled(true);
+	this->focus();
+
+	//TODO: Extra code goes here to be preformed when settings dialog form closes
 }

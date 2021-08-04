@@ -110,12 +110,14 @@
     <ClCompile Include="SDRunoPlugin_Template.cpp" />
     <ClCompile Include="SDRunoPlugin_TemplateForm.cpp" />
     <ClCompile Include="SDRunoPlugin_TemplateProject.cpp" />
+    <ClCompile Include="SDRunoPlugin_TemplateSettingsDialog.cpp" />
     <ClCompile Include="SDRunoPlugin_TemplateUi.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="SDRunoPlugin_Template.h" />
     <ClInclude Include="SDRunoPlugin_TemplateForm.h" />
+    <ClInclude Include="SDRunoPlugin_TemplateSettingsDialog.h" />
     <ClInclude Include="SDRunoPlugin_TemplateUi.h" />
   </ItemGroup>
   <ItemGroup>

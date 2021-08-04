@@ -28,7 +28,9 @@ public:
 		DemodulatorCW = 10,
 		DemodulatorDigital = 11,
 		DemodulatorDAB = 12,
-		DemodulatorIQOUT = 13
+		DemodulatorIQOUT = 13,
+		DemodulatorADSB2 = 14,
+		DemodulatorADSB8 = 15
 	} DemodulatorType;
 
 	typedef enum

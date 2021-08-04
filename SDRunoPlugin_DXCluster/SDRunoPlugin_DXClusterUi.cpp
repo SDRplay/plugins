@@ -224,6 +224,7 @@ void SDRunoPlugin_DXClusterUi::HandleEvent(const UnoEvent& ev)
 
 	case UnoEvent::ClosingDown:
 		SaveSettings();
+		FormClosed();
 		break;
 
 	default:

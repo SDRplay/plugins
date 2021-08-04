@@ -10,7 +10,6 @@
 #define IDB_MIN_DOWN                    110
 #define IDB_SETT                        112
 #define IDB_SETT_DOWN                   113
-#define IDB_BITMAP1                     114
 #define IDB_HEADER                      114
 
 // Next default values for new objects
