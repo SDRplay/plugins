@@ -223,7 +223,6 @@ void SDRunoPlugin_DXClusterUi::HandleEvent(const UnoEvent& ev)
 		break;
 
 	case UnoEvent::ClosingDown:
-		SaveSettings();
 		FormClosed();
 		break;
 
@@ -235,7 +234,7 @@ void SDRunoPlugin_DXClusterUi::HandleEvent(const UnoEvent& ev)
 // Required to make sure the plugin is correctly unloaded when closed
 void SDRunoPlugin_DXClusterUi::FormClosed()
 {
-	SaveSettings();
+	StopDXCluster();
 	m_controller.RequestUnload(&m_parent);
 }
 
