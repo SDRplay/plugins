@@ -1,3 +1,11 @@
-Release
-.vs
+[Rr]elease/
+[Dd]ebug/
+x64/
+x86/
+.vs/
 nana/build/bin/nana_v141_Release_x86.lib
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
