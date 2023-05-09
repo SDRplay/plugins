@@ -135,7 +135,7 @@ std::string SDRunoPlugin_DXClusterUi::LoadCluster()
 	m_controller.GetConfigurationKey("DXCluster.Cluster", tmp);
 	if (tmp.empty())
 	{
-		return "gb7baa.com:7300"; // TODO: Better default?
+		return "hrd.wa9pie.net:8000"; // TODO: Better default?
 	}
 	return tmp;
 }
