@@ -86,7 +86,6 @@ void SDRunoPlugin_TemplateForm::Setup()
 	BYTE* minPixels = NULL;
 	BYTE* minoverPixels = NULL;
 	BYTE* barPixels = NULL;
-	BYTE* barfocusedPixels = NULL;
 	BYTE* settPixels = NULL;
 	BYTE* settoverPixels = NULL;
 	const unsigned int rawDataOffset = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFO);
@@ -209,6 +208,15 @@ void SDRunoPlugin_TemplateForm::Setup()
 	img_header.open(barPixels, bmInfo_bar.bmiHeader.biSizeImage);
 	img_sett_normal.open(settPixels, bmInfo_sett.bmiHeader.biSizeImage);
 	img_sett_down.open(settoverPixels, bmInfo_sett_over.bmiHeader.biSizeImage);
+	delete[] borderPixels;
+	delete[] innerPixels;
+	delete[] closePixels;
+	delete[] closeoverPixels;
+	delete[] minPixels;
+	delete[] minoverPixels;
+	delete[] barPixels;
+	delete[] settPixels;
+	delete[] settoverPixels;
 	ReleaseDC(NULL, hdc);
 	bg_border.load(img_border, nana::rectangle(0, 0, 590, 340));
 	bg_border.stretchable(0, 0, 0, 0);
